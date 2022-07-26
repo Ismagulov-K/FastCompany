@@ -3,34 +3,14 @@ import api from "../api"
 
 const Users = () => {
     const [users, setUsers] = useState(api.users.fetchAll);
-    // const usersArray = api.users.fetchAll();
 
-    const generatePhrase = (count) => {
-        let text = '';
-        if (count >= 5 || count == 1){
-            text = 'человек тусанет с тобой сегодня'
-        }else if(count <= 4 && count > 1){
-            text = 'человека тусанут с тобой сегодня'
-        }else if(count == 0){
-            text = 'Никто не тусанет с тобой :('
-        }
-        return text;
+    const renderPhrase = (number) => {
+        const lastOne = Number(number.toString().slice(-1));
+        if (number > 4 && number < 15) return "человек тусанет";
+        if ([2, 3, 4].indexOf(lastOne) >= 0) return "человека тусанут";
+        if (lastOne === 1) return "человек тусанет";
+        return "человек тусанет";
     };
-
-    const getBadgeClasses = (count) => {
-        let classes = "badge m-2 fs-4 fw-bolder ";
-        classes += count === 0 ? "bg-danger" : "bg-primary";
-        return classes;
-    };
-
-    const titleSpan = (count) =>{
-        if (count > 0){
-            return <span className={getBadgeClasses(count)}>{count} {generatePhrase(count)}</span>
-        }
-        return <span className={getBadgeClasses(count)}>{generatePhrase(count)}</span>
-
-    };
-
 
     const renderQualities = (qualities) => {
         return qualities.map((i) => (
@@ -68,7 +48,17 @@ const Users = () => {
 
     return (
         <>
-            {titleSpan(users.length)}
+
+            <h2>
+                <span
+                    className={"badge m-2 " + (users.length > 0 ? "bg-primary" : "bg-danger")}>
+                  {users.length > 0
+                      ? `${
+                          users.length + " " + renderPhrase(users.length)
+                      } с тобой сегодня`
+                      : "Никто с тобой не тусанет :("}
+                </span>
+            </h2>
             {!!users.length && <table className="table">
                 <thead>
                     <tr>
